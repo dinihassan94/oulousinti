@@ -1,0 +1,33 @@
+ipeline {
+    agent any
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/dinihassan94/oulousinti.git'  // Remplacez par votre URL de dépôt Git
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Construction de l'image Docker
+                    sh 'docker build -t my-html-page .'
+                }
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Exécutez le conteneur Docker
+                    sh 'docker run -d -p 8082:80 --name my-html-container my-html-page'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            // Nettoyage si nécessaire
+            sh 'docker stop my-html-container || true'
+            sh 'docker rm my-html-container || true'
+        }
+    }
+}
